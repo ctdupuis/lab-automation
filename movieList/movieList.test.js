@@ -22,18 +22,34 @@ describe("Movie Page Manipulation", () => {
     const movieTitle = "Spider-Man";
 
     test("Add a movie to the page", async () => {
-        const input = await driver.findElement(By.id('new-movie'));
+        const input = await driver.findElement(By.css('input'));
         await input.sendKeys(movieTitle, Key.RETURN);
-        const check = await driver.findElement(By.className("Spider-Man"));
+        // y.xpath("//*[contains(text(),
+        const check = await driver.findElement(By.xpath(`//*[contains(text(), ${movieTitle})]`));
 
         expect(check).toBeTruthy();
+    })
+
+    test("Crossing off a movie works", async () => {
+        const span = await driver.findElement(By.css('span'));
+        await span.click();
+        const cN = span.getAttribute('class');
+        
+        expect(cN).toBe("checked");
     })
 
     test("Delete a movie from the page", async () => {
         const button = await driver.findElement(By.id(movieTitle));
         await button.click();
         const lis = await driver.findElements(By.css('li'));
+
         expect(lis.length).toEqual(0);
+    })
+
+    test("Messages display correct text", async () => {
+        const text = await driver.findElement(By.id('message')).getText();
+    
+        expect(text).toBe(`${movieTitle} deleted!`);
     })
 
 })
